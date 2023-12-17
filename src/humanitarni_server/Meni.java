@@ -27,12 +27,16 @@ public class Meni {
 			ka_klijentu.println("\t0. Izlaz");
 			ka_klijentu.println("--------------------------------------------------");
 			ka_klijentu.println("\tIzbor: ");
-			int izbor = Integer.parseInt(od_klijenta.readLine());
+			int izbor = 7;
+			try {
+				izbor = Integer.parseInt(od_klijenta.readLine());
+			} catch (NumberFormatException e) {
+				izbor = 7;
+			}
 			switch (izbor) {
 			case 0:
 				izlaz = true;
 				ka_klijentu.println("> Prijatno;");
-				od_klijenta.read();
 				break;
 			case 1:
 				ka_klijentu.println("> uplata placehodler;");
@@ -50,8 +54,9 @@ public class Meni {
 				ka_klijentu.println("> pregled transakcija placehodler;");
 				break;
 			default:
-				ka_klijentu.println("> " + izbor + " nije validan izbor;");
-				od_klijenta.read();
+				ka_klijentu.println("> Morate izabrati stavku izmedju 0 i 5;");
+				ka_klijentu.println("> Pritisnite Enter za nastavak;");
+				od_klijenta.readLine();
 				break;
 			}
 		}

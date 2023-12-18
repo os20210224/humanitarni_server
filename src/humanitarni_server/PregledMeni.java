@@ -14,14 +14,14 @@ public class PregledMeni {
 		ka_klijentu.println("=                 Pregled stanja                 =");
 		ka_klijentu.println("==================================================");
 		int stanje = get_stanje();
-		if (stanje == 0)
+		if (stanje == -1)
 			ka_klijentu.println("Pregled stanja trenutno nije dostupan.\n");
 		else
 			ka_klijentu.println("Do sada je skupljeno " + stanje + " dinara!\n");
 	}
 	// METODE
 	static int get_stanje() {
-		int s = 0;
+		int s = -1;
 		try {
 			RandomAccessFile stanje = new RandomAccessFile("stanje.txt", "r");
 			s = Integer.parseInt(stanje.readLine());

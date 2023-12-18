@@ -25,7 +25,7 @@ public class ServerThread extends Thread {
 			ka_klijentu.println("> Dobrodosli!\n");
 			Meni.glavni_meni(false, od_klijenta, ka_klijentu);
 		} catch (IOException e) {
-			System.err.println(">>> greska pri kreiranju toka podataka sa klijentom: " + e);
+			System.err.println(">>> greska u konekciji sa klijentom: " + e);
 		}
 	}
 

@@ -39,7 +39,8 @@ public class Meni {
 				ka_klijentu.println("> Prijatno;");
 				break;
 			case 1:
-				ka_klijentu.println("> uplata placehodler;");
+//				ka_klijentu.println("> uplata placehodler;");
+				UplataMeni.uplata_meni(od_klijenta, ka_klijentu);
 				break;
 			case 2:
 				ka_klijentu.println("> registracija placehodler;");

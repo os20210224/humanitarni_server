@@ -39,8 +39,9 @@ public class Meni {
 				ka_klijentu.println("> Prijatno;");
 				break;
 			case 1:
-//				ka_klijentu.println("> uplata placehodler;");
 				UplataMeni.uplata_meni(od_klijenta, ka_klijentu);
+				ka_klijentu.println("> Pritisnite Enter za nastavak;");
+				od_klijenta.readLine();
 				break;
 			case 2:
 				ka_klijentu.println("> registracija placehodler;");
@@ -49,7 +50,9 @@ public class Meni {
 				ka_klijentu.println("> prijava placehodler;");
 				break;
 			case 4:
-				ka_klijentu.println("> pregled stanja placehodler;");
+				PregledMeni.pregled_meni(od_klijenta, ka_klijentu);
+				ka_klijentu.println("> Pritisnite Enter za nastavak;");
+				od_klijenta.readLine();
 				break;
 			case 5:
 				ka_klijentu.println("> pregled transakcija placehodler;");

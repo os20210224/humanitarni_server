@@ -17,7 +17,7 @@ public class UplataMeni {
 		String kartica;
 		try {
 			// unos osnovnih podataka
-			header(od_klijenta, ka_klijentu);
+			header(ka_klijentu);
 			ka_klijentu.println("Ime: ");
 			nova_uplata.ime = od_klijenta.readLine();
 			ka_klijentu.println("Prezime: ");
@@ -27,7 +27,7 @@ public class UplataMeni {
 			// unos i validacija kartice
 			kartica = unos_kartice(od_klijenta, ka_klijentu);
 			while (!validna_kartica(kartica)) {
-				header(od_klijenta, ka_klijentu);
+				header(ka_klijentu);
 				ka_klijentu.println("Podaci nisu validni!");
 				kartica = unos_kartice(od_klijenta, ka_klijentu);
 			}
@@ -39,7 +39,7 @@ public class UplataMeni {
 				nova_uplata.iznos = 0;
 			}
 			while (nova_uplata.iznos < 200) {
-				header(od_klijenta, ka_klijentu);
+				header(ka_klijentu);
 				ka_klijentu.println("Iznos mora biti najmanje broj 200!");
 				ka_klijentu.println("Iznos koji zelite uplatiti: ");
 				try {
@@ -144,7 +144,7 @@ public class UplataMeni {
 		return kartica;
 	}
 
-	static void header(BufferedReader od_klijenta, PrintStream ka_klijentu) {
+	static void header(PrintStream ka_klijentu) {
 		ka_klijentu.println("==================================================");
 		ka_klijentu.println("=               SISTEM ZA DONACIJU               =");
 		ka_klijentu.println("=                     Uplata                     =");

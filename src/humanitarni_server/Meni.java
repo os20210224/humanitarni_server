@@ -44,7 +44,9 @@ public class Meni {
 				od_klijenta.readLine();
 				break;
 			case 2:
-				ka_klijentu.println("> registracija placehodler;");
+				RegistracijaMeni.registracija(od_klijenta, ka_klijentu);
+				ka_klijentu.println("> Pritisnite Enter za nastavak;");
+				od_klijenta.readLine();
 				break;
 			case 3:
 				ka_klijentu.println("> prijava placehodler;");

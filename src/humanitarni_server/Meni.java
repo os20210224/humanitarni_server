@@ -38,7 +38,10 @@ public class Meni {
 				ServerThread.ka_klijentu.println("> Prijatno;");
 				break;
 			case 1:
-				Op_Uplata.uplata();
+				if(ServerThread.prijavljen_korisnik == null)
+					Op_Uplata.uplata();
+				else
+					Op_Uplata.p_uplata();
 				ServerThread.ka_klijentu.println("> Pritisnite Enter za nastavak;");
 				ServerThread.od_klijenta.readLine();
 				break;

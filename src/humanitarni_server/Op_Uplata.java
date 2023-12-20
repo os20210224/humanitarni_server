@@ -23,7 +23,7 @@ public class Op_Uplata {
 			ServerThread.ka_klijentu.println("Prezime: ");
 			nova_uplata.prezime = ServerThread.od_klijenta.readLine();
 			ServerThread.ka_klijentu.println("Adresa: ");
-			nova_uplata.adresa = ServerThread.od_klijenta.readLine();
+			nova_uplata.email = ServerThread.od_klijenta.readLine();
 			// unos i validacija kartice
 			kartica = unos_kartice();
 			while (!validna_kartica(kartica)) {
@@ -58,14 +58,56 @@ public class Op_Uplata {
 		}
 	}
 
+	public static void p_uplata() {
+		Uplata nova_uplata = new Uplata(ServerThread.prijavljen_korisnik.ime, ServerThread.prijavljen_korisnik.prezime,
+				ServerThread.prijavljen_korisnik.email);
+		String kartica;
+		try {
+			kartica = unos_CVV();
+			while (!validna_kartica(kartica)) {
+				header();
+				ServerThread.ka_klijentu.println("Pogresan CVV!");
+				kartica = unos_CVV();
+			}
+			// unos i validacija iznosa
+			ServerThread.ka_klijentu.println("Iznos koji zelite uplatiti: ");
+			try {
+				nova_uplata.iznos = Integer.parseInt(ServerThread.od_klijenta.readLine());
+			} catch (NumberFormatException e) {
+				nova_uplata.iznos = 0;
+			}
+			while (nova_uplata.iznos < 200) {
+				header();
+				ServerThread.ka_klijentu.println("Iznos mora biti najmanje broj 200!");
+				ServerThread.ka_klijentu.println("Iznos koji zelite uplatiti: ");
+				try {
+					nova_uplata.iznos = Integer.parseInt(ServerThread.od_klijenta.readLine());
+				} catch (NumberFormatException e) {
+					nova_uplata.iznos = 0;
+				}
+			}
+			if (dodaj_uplatu(nova_uplata) && apdejtuj_stanje(nova_uplata)) {
+				ServerThread.ka_klijentu.println("Vasa uplata je uspesno evidentirana!");
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	// METODE
-	
+
+	static String unos_CVV() throws IOException {
+		ServerThread.ka_klijentu.println("Unesite CVV:");
+		return ServerThread.prijavljen_korisnik.kartica + " " + ServerThread.od_klijenta.readLine();
+	}
+
 	static boolean posalji_fajl(Uplata uplata) {
 		boolean stanje = true;
-	
+
 		String us = formatiraj_uplatu(uplata);
 		// posalji fajl preko TCPa :D
-		
+
 		return stanje;
 	}
 
@@ -99,14 +141,14 @@ public class Op_Uplata {
 
 	static String formatiraj_uplatu(Uplata uplata) {
 		String uplata_string = String.format("Ime: %20s ", uplata.ime)
-				+ String.format("| Prezime: %20s |", uplata.prezime) + String.format("Adresa: %30s |", uplata.adresa)
+				+ String.format("| Prezime: %20s |", uplata.prezime) + String.format("Adresa: %30s |", uplata.email)
 				+ String.format("Datum i vreme: %d.%d.%d %d:%d |", uplata.vreme.get(GregorianCalendar.DAY_OF_MONTH),
 						uplata.vreme.get(GregorianCalendar.MONTH), uplata.vreme.get(GregorianCalendar.YEAR),
 						uplata.vreme.get(GregorianCalendar.HOUR_OF_DAY), uplata.vreme.get(GregorianCalendar.MINUTE))
 				+ String.format("Iznos: %d |\n", uplata.iznos);
 		return uplata_string;
 	}
-	
+
 	static boolean apdejtuj_stanje(Uplata uplata) {
 		boolean status = true;
 		ReadWriteLock lock = new ReentrantReadWriteLock();

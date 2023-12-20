@@ -156,7 +156,7 @@ public class UplataMeni {
 			RandomAccessFile lista_kartica = new RandomAccessFile("baza.txt", "r");
 			String k;
 			while ((k = lista_kartica.readLine()) != null) {
-				if (k.equals(kartica)) {
+				if (k.contains(kartica)) {
 					lista_kartica.close();
 					return true;
 				}

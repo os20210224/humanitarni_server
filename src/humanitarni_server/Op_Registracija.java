@@ -7,6 +7,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import objekti.Korisnik;
 
@@ -74,16 +77,23 @@ public class Op_Registracija {
 	// METODE
 
 	static boolean unos_registracije(Korisnik korisnik) {
+		ReadWriteLock lock = new ReentrantReadWriteLock();
+		Lock upis_lock = lock.writeLock();
 		File registrovani_korisnici = new File("registrovani_klijenti.txt");
 		try {
 			// true u file output konstrukturu otvara fajl za apendovanje // boolean append
+			upis_lock.lock();
 			ObjectOutputStream upis = new ObjectOutputStream(new FileOutputStream(registrovani_korisnici, true));
 			upis.writeObject(korisnik);
 			upis.close();
 		} catch (IOException e) {
 			System.err.println("Greska pri otvaranju baze registrovanih korisnika");
 			e.printStackTrace();
+			upis_lock.unlock();
 			return false;
+		}
+		finally {
+			upis_lock.unlock();
 		}
 		return true;
 	}

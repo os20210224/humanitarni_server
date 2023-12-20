@@ -140,9 +140,9 @@ public class Op_Uplata {
 	}
 
 	static String formatiraj_uplatu(Uplata uplata) {
-		String uplata_string = String.format("Ime: %20s ", uplata.ime)
+		String uplata_string = String.format("| Ime: %20s ", uplata.ime)
 				+ String.format("| Prezime: %20s |", uplata.prezime) + String.format("Adresa: %30s |", uplata.email)
-				+ String.format("Datum i vreme: %d.%d.%d %d:%d |", uplata.vreme.get(GregorianCalendar.DAY_OF_MONTH),
+				+ String.format("Datum i vreme: %d.%d.%d %d:%2d |", uplata.vreme.get(GregorianCalendar.DAY_OF_MONTH),
 						uplata.vreme.get(GregorianCalendar.MONTH), uplata.vreme.get(GregorianCalendar.YEAR),
 						uplata.vreme.get(GregorianCalendar.HOUR_OF_DAY), uplata.vreme.get(GregorianCalendar.MINUTE))
 				+ String.format("Iznos: %d |\n", uplata.iznos);

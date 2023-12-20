@@ -1,7 +1,10 @@
 package humanitarni_server;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.util.GregorianCalendar;
 import java.util.concurrent.locks.Lock;
@@ -138,6 +141,32 @@ public class Op_Uplata {
 		}
 		return status;
 	}
+	
+//	static boolean dodaj_uplatu(Uplata uplata) {
+//		boolean status = true;
+//		ReadWriteLock lock = new ReentrantReadWriteLock();
+//		Lock upis_lock = lock.writeLock();
+//		try {
+//			upis_lock.lock();
+//			File uplate = new File("uplate.dat");
+//			ObjectOutputStream upis = new ObjectOutputStream(new FileOutputStream(uplate, true));
+//
+//			upis.writeObject(uplata);
+//
+//			upis.close();
+//		} catch (FileNotFoundException e) {
+//			status = false;
+//			System.out.println("> Greska pri otvaranju liste uplata");
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			status = false;
+//			System.out.println("> Greska pri zatvaranju liste uplata");
+//			e.printStackTrace();
+//		} finally {
+//			upis_lock.unlock();
+//		}
+//		return status;
+//	}
 
 	static String formatiraj_uplatu(Uplata uplata) {
 		String uplata_string = String.format("| Ime: %20s ", uplata.ime)

@@ -23,7 +23,8 @@ public class Server {
 		try {
 			// otvara soket servera na zadatom portu
 			soket_server = new ServerSocket(port);
-			System.out.println("> server online na portu " + port + ";\n==========================================");
+			System.out.println("> server online na portu " + port + ";");
+			System.out.println("==========================================");
 			//
 			while (true) {
 				System.out.println("> iscekuje se klijent...\n");

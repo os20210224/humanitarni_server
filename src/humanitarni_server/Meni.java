@@ -56,12 +56,14 @@ public class Meni {
 				ServerThread.od_klijenta.readLine();
 				break;
 			case 4:
-				Op_Pregled.pregled();
+				Op_Pregled.pregled_stanja();
 				ServerThread.ka_klijentu.println("> Pritisnite Enter za nastavak;");
 				ServerThread.od_klijenta.readLine();
 				break;
 			case 5:
-				ServerThread.ka_klijentu.println("> pregled transakcija placehodler;");
+				Op_Pregled.pregled_transakcija();
+				ServerThread.ka_klijentu.println("> Pritisnite Enter za nastavak;");
+				ServerThread.od_klijenta.readLine();
 				break;
 			default:
 				ServerThread.ka_klijentu.println("> Morate izabrati stavku izmedju 0 i 5;");

@@ -10,8 +10,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 
+import objekti.Korisnik;
+
 // dopuni provere i feedback
-public class RegistracijaMeni {
+public class Op_Registracija {
 
 	public static void registracija(BufferedReader od_klijenta, PrintStream ka_klijentu) {
 		Korisnik novi_korisnik = new Korisnik();
@@ -47,7 +49,7 @@ public class RegistracijaMeni {
 				ka_klijentu.println("Unesite validan JMBG:");
 			}
 			ka_klijentu.println("Unesite broj kreditne kartice:");
-			while (!UplataMeni.validna_kartica(novi_korisnik.kartica = od_klijenta.readLine())) {
+			while (!Op_Uplata.validna_kartica(novi_korisnik.kartica = od_klijenta.readLine())) {
 				header(ka_klijentu);
 				ka_klijentu.println("Ta kartica ne postoji!");
 				ka_klijentu.println("Unesite broj kreditne kartice:");

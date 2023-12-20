@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
 
-public class PregledMeni {
+public class Op_Pregled {
 
 	public static void pregled_meni(BufferedReader od_klijenta, PrintStream ka_klijentu) {
 		ka_klijentu.println("==================================================");

@@ -39,12 +39,12 @@ public class Meni {
 				ka_klijentu.println("> Prijatno;");
 				break;
 			case 1:
-				UplataMeni.uplata_meni(od_klijenta, ka_klijentu);
+				Op_Uplata.uplata_meni(od_klijenta, ka_klijentu);
 				ka_klijentu.println("> Pritisnite Enter za nastavak;");
 				od_klijenta.readLine();
 				break;
 			case 2:
-				RegistracijaMeni.registracija(od_klijenta, ka_klijentu);
+				Op_Registracija.registracija(od_klijenta, ka_klijentu);
 				ka_klijentu.println("> Pritisnite Enter za nastavak;");
 				od_klijenta.readLine();
 				break;
@@ -52,7 +52,7 @@ public class Meni {
 				ka_klijentu.println("> prijava placehodler;");
 				break;
 			case 4:
-				PregledMeni.pregled_meni(od_klijenta, ka_klijentu);
+				Op_Pregled.pregled_meni(od_klijenta, ka_klijentu);
 				ka_klijentu.println("> Pritisnite Enter za nastavak;");
 				od_klijenta.readLine();
 				break;

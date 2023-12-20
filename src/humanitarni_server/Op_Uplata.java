@@ -10,7 +10,9 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class UplataMeni {
+import objekti.Uplata;
+
+public class Op_Uplata {
 
 	public static void uplata_meni(BufferedReader od_klijenta, PrintStream ka_klijentu) {
 		Uplata nova_uplata = new Uplata();
@@ -170,22 +172,6 @@ public class UplataMeni {
 			e.printStackTrace();
 		}
 		return false;
-	}
-
-}
-
-// OBJEKAT
-
-class Uplata {
-
-	String ime;
-	String prezime;
-	String adresa;
-	GregorianCalendar vreme;
-	int iznos;
-
-	public Uplata() {
-		vreme = new GregorianCalendar();
 	}
 
 }

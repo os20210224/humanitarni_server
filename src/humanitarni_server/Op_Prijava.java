@@ -12,40 +12,23 @@ import objekti.Korisnik;
 public class Op_Prijava {
 
 	public static void prijava() {
-		String username;
-		String password;
 
 		try {
-			header();
-			ServerThread.ka_klijentu.println("Unesite korisnicko ime:");
-			username = ServerThread.od_klijenta.readLine();
-			ServerThread.ka_klijentu.println("Unesite sifru:");
-			password = ServerThread.od_klijenta.readLine();
-			int ishod;
-			while ((ishod = validni_kredencijali(username, password)) != 0) {
+			Username_Password up = unos(null);
+			log ishod;
+			while ((ishod = validni_kredencijali(up)) != log.USPEH) {
 				switch (ishod) {
-				case 1:
-					header();
-					ServerThread.ka_klijentu.println("Negde ste pogresili!\n");
-					ServerThread.ka_klijentu.println("Unesite korisnicko ime:");
-					username = ServerThread.od_klijenta.readLine();
-					ServerThread.ka_klijentu.println("Unesite sifru:");
-					password = ServerThread.od_klijenta.readLine();
+				case POGRESNA_LOZINKA:
+					up = unos("Pogresna lozinka!\n");
 					break;
-				case 2:
-					header();
-					ServerThread.ka_klijentu.println("Nije registrovan korisnik sa tim korisnickim imenom!\n");
-					ServerThread.ka_klijentu.println("Unesite korisnicko ime:");
-					username = ServerThread.od_klijenta.readLine();
-					ServerThread.ka_klijentu.println("Unesite sifru:");
-					password = ServerThread.od_klijenta.readLine();
+				case NE_POSTOJI:
+					up = unos("Nije registrovan korisnik sa tim korisnickim imenom!\n");
 					break;
 				default:
 					break;
 				}
 			}
 			ServerThread.ka_klijentu.println("\nUspesno ste se prijavili!");
-			ServerThread.ka_klijentu.println("Sada mozete videti najskorije uplate.");
 		} catch (IOException e) {
 			System.err.println("IOException: " + e);
 		} catch (RegKlijentiException e) {
@@ -56,42 +39,61 @@ public class Op_Prijava {
 
 	// METODE
 
-	static int validni_kredencijali(String username, String password) throws RegKlijentiException {
+	static Username_Password unos(String poruka) throws IOException {
+		Username_Password up = new Username_Password();
+		Meni_Header.header(Podmeni.PRIJAVA);
+		if (poruka != null)
+			ServerThread.ka_klijentu.println(poruka);
+		ServerThread.ka_klijentu.println("Unesite korisnicko ime:");
+		up.username = ServerThread.od_klijenta.readLine();
+		ServerThread.ka_klijentu.println("Unesite sifru:");
+		up.password = ServerThread.od_klijenta.readLine();
+		return up;
+	}
+
+	static log validni_kredencijali(Username_Password up) throws RegKlijentiException {
 		File registrovani_korisnici = new File("registrovani_klijenti.txt");
 		Korisnik k;
 		boolean korisnik_postoji = false;
 		try {
 			ObjectInputStream pogled = new ObjectInputStream(new FileInputStream(registrovani_korisnici));
 			while ((k = (Korisnik) pogled.readObject()) != null) {
-				if (username.equals(k.username)) {
+				if (up.username.equals(k.username)) {
 					korisnik_postoji = true;
 				}
-				if (password.equals(k.password)) {
+				if (up.password.equals(k.password)) {
 					ServerThread.prijavljen_korisnik = k;
 					pogled.close();
-					return 0;
+					return log.USPEH;
 				}
 			}
 			pogled.close();
-		}catch (EOFException e) {
-			if (korisnik_postoji)
-				return 1;
-			return 2;
-		} 
-		catch (IOException | ClassNotFoundException e) {
+		} catch (EOFException e) {
+		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 			throw new RegKlijentiException();
 		}
 		if (korisnik_postoji)
-			return 1;
-		return 2;
+			return log.POGRESNA_LOZINKA;
+		return log.NE_POSTOJI;
 	}
 
-	static void header() {
-		ServerThread.ka_klijentu.println("==================================================");
-		ServerThread.ka_klijentu.println("=               SISTEM ZA DONACIJU               =");
-		ServerThread.ka_klijentu.println("=                     Prijava                    =");
-		ServerThread.ka_klijentu.println("==================================================");
+}
+
+enum log {
+	NE_POSTOJI, POGRESNA_LOZINKA, USPEH
+}
+
+class Username_Password {
+	String username;
+	String password;
+
+	public Username_Password() {
+
 	}
 
+	public Username_Password(String username, String password) {
+		this.username = username;
+		this.password = password;
+	}
 }

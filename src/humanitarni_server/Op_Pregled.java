@@ -11,10 +11,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class Op_Pregled {
 
 	public static void pregled_stanja() {
-		ServerThread.ka_klijentu.println("==================================================");
-		ServerThread.ka_klijentu.println("=               SISTEM ZA DONACIJU               =");
-		ServerThread.ka_klijentu.println("=                 Pregled stanja                 =");
-		ServerThread.ka_klijentu.println("==================================================");
+		Meni_Header.header(Podmeni.PREGLED_STANJA);
 		int stanje = get_stanje();
 		if (stanje == -1)
 			ServerThread.ka_klijentu.println("Pregled stanja trenutno nije dostupan.\n");
@@ -23,10 +20,7 @@ public class Op_Pregled {
 	}
 
 	public static void pregled_transakcija() {
-		ServerThread.ka_klijentu.println("==================================================");
-		ServerThread.ka_klijentu.println("=               SISTEM ZA DONACIJU               =");
-		ServerThread.ka_klijentu.println("=               Pregled transakcija              =");
-		ServerThread.ka_klijentu.println("==================================================");
+		Meni_Header.header(Podmeni.PREGLED_TRANSAKCIJA);
 		if (ServerThread.prijavljen_korisnik == null) {
 			ServerThread.ka_klijentu.println("Morate biti ulogovani da bi videli transakcije!");
 			return;
@@ -48,7 +42,7 @@ public class Op_Pregled {
 			uplate = new RandomAccessFile("uplate.txt", "rw");
 			
 			String u;
-//			String header = uplate.readLine();
+//			String header = uplate.readLine(); // TODO srediti format transakcija
 			while ((u = uplate.readLine()) != null) {
 				lista.add(0, u);
 			}

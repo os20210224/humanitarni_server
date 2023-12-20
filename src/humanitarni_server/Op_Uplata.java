@@ -1,10 +1,7 @@
 package humanitarni_server;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.util.GregorianCalendar;
 import java.util.concurrent.locks.Lock;
@@ -20,7 +17,7 @@ public class Op_Uplata {
 		String kartica;
 		try {
 			// unos osnovnih podataka
-			header();
+			Meni_Header.header(Podmeni.UPLATA);
 			ServerThread.ka_klijentu.println("Ime: ");
 			nova_uplata.ime = ServerThread.od_klijenta.readLine();
 			ServerThread.ka_klijentu.println("Prezime: ");
@@ -30,7 +27,7 @@ public class Op_Uplata {
 			// unos i validacija kartice
 			kartica = unos_kartice();
 			while (!validna_kartica(kartica)) {
-				header();
+				Meni_Header.header(Podmeni.UPLATA);
 				ServerThread.ka_klijentu.println("Podaci nisu validni!");
 				kartica = unos_kartice();
 			}
@@ -42,7 +39,7 @@ public class Op_Uplata {
 				nova_uplata.iznos = 0;
 			}
 			while (nova_uplata.iznos < 200) {
-				header();
+				Meni_Header.header(Podmeni.UPLATA);
 				ServerThread.ka_klijentu.println("Iznos mora biti najmanje broj 200!");
 				ServerThread.ka_klijentu.println("Iznos koji zelite uplatiti: ");
 				try {
@@ -68,7 +65,7 @@ public class Op_Uplata {
 		try {
 			kartica = unos_CVV();
 			while (!validna_kartica(kartica)) {
-				header();
+				Meni_Header.header(Podmeni.UPLATA);
 				ServerThread.ka_klijentu.println("Pogresan CVV!");
 				kartica = unos_CVV();
 			}
@@ -80,7 +77,7 @@ public class Op_Uplata {
 				nova_uplata.iznos = 0;
 			}
 			while (nova_uplata.iznos < 200) {
-				header();
+				Meni_Header.header(Podmeni.UPLATA);
 				ServerThread.ka_klijentu.println("Iznos mora biti najmanje broj 200!");
 				ServerThread.ka_klijentu.println("Iznos koji zelite uplatiti: ");
 				try {
@@ -109,7 +106,7 @@ public class Op_Uplata {
 		boolean stanje = true;
 
 		String us = formatiraj_uplatu(uplata);
-		// posalji fajl preko TCPa :D
+		// TODO posalji fajl preko TCPa :D
 
 		return stanje;
 	}
@@ -141,34 +138,8 @@ public class Op_Uplata {
 		}
 		return status;
 	}
-	
-//	static boolean dodaj_uplatu(Uplata uplata) {
-//		boolean status = true;
-//		ReadWriteLock lock = new ReentrantReadWriteLock();
-//		Lock upis_lock = lock.writeLock();
-//		try {
-//			upis_lock.lock();
-//			File uplate = new File("uplate.dat");
-//			ObjectOutputStream upis = new ObjectOutputStream(new FileOutputStream(uplate, true));
-//
-//			upis.writeObject(uplata);
-//
-//			upis.close();
-//		} catch (FileNotFoundException e) {
-//			status = false;
-//			System.out.println("> Greska pri otvaranju liste uplata");
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			status = false;
-//			System.out.println("> Greska pri zatvaranju liste uplata");
-//			e.printStackTrace();
-//		} finally {
-//			upis_lock.unlock();
-//		}
-//		return status;
-//	}
 
-	static String formatiraj_uplatu(Uplata uplata) {
+	static String formatiraj_uplatu(Uplata uplata) { // TODO srediti ovaj format upisa i dodati header
 		String uplata_string = String.format("| Ime: %20s ", uplata.ime)
 				+ String.format("| Prezime: %20s |", uplata.prezime) + String.format("Adresa: %30s |", uplata.email)
 				+ String.format("Datum i vreme: %d.%d.%d %d:%2d |", uplata.vreme.get(GregorianCalendar.DAY_OF_MONTH),
@@ -213,13 +184,6 @@ public class Op_Uplata {
 		ServerThread.ka_klijentu.println("CVV: ");
 		kartica += ServerThread.od_klijenta.readLine();
 		return kartica;
-	}
-
-	static void header() {
-		ServerThread.ka_klijentu.println("==================================================");
-		ServerThread.ka_klijentu.println("=               SISTEM ZA DONACIJU               =");
-		ServerThread.ka_klijentu.println("=                     Uplata                     =");
-		ServerThread.ka_klijentu.println("==================================================");
 	}
 
 	static boolean validna_kartica(String kartica) {

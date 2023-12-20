@@ -17,6 +17,10 @@ public class Meni {
 			//	neko resenje za ciscenje ekrana konzole
 			ServerThread.ka_klijentu.println("==================================================");
 			ServerThread.ka_klijentu.println("=               SISTEM ZA DONACIJU               =");
+			if (ServerThread.prijavljen_korisnik != null) {
+				ServerThread.ka_klijentu.println("=------------------------------------------------=");			
+				ServerThread.ka_klijentu.println(String.format("%s Korisnik:%37s %s", "=",ServerThread.prijavljen_korisnik.username , "="));		
+			}
 			ServerThread.ka_klijentu.println("==================================================");
 			ServerThread.ka_klijentu.println("\t1. Uplata");
 			ServerThread.ka_klijentu.println("\t2. Registracija");

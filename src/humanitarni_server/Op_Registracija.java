@@ -1,6 +1,5 @@
 package humanitarni_server;
 
-import java.io.BufferedReader;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,66 +7,64 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintStream;
 
 import objekti.Korisnik;
 
 // dopuni provere i feedback
 public class Op_Registracija {
 
-	public static void registracija(BufferedReader od_klijenta, PrintStream ka_klijentu) {
+	public static void registracija() {
 		Korisnik novi_korisnik = new Korisnik();
 		try {
-			header(ka_klijentu);
-			ka_klijentu.println("Unesite korisnicko ime:");
-			while (!validan_username(novi_korisnik.username = od_klijenta.readLine())) {
-				header(ka_klijentu);
-				ka_klijentu.println("To ime je zauzeto!");
-				ka_klijentu.println("Unesite korisnicko ime:");
+			header();
+			ServerThread.ka_klijentu.println("Unesite korisnicko ime:");
+			while (!validan_username(novi_korisnik.username = ServerThread.od_klijenta.readLine())) {
+				header();
+				ServerThread.ka_klijentu.println("To ime je zauzeto!");
+				ServerThread.ka_klijentu.println("Unesite korisnicko ime:");
 			}
-			ka_klijentu.println("Unesite sifru:");
-			while (!validan_password(novi_korisnik.password = od_klijenta.readLine())) {
-				header(ka_klijentu);
-				ka_klijentu.println("Sifra mora imati minimum 8 karaktera");
-				ka_klijentu.println("Unesite sifru:");
+			ServerThread.ka_klijentu.println("Unesite sifru:");
+			while (!validan_password(novi_korisnik.password = ServerThread.od_klijenta.readLine())) {
+				header();
+				ServerThread.ka_klijentu.println("Sifra mora imati minimum 8 karaktera");
+				ServerThread.ka_klijentu.println("Unesite sifru:");
 			}
-			ka_klijentu.println("Unesite ime:");
-			while (!validno_ime_prezime(novi_korisnik.ime = od_klijenta.readLine())) {
-				header(ka_klijentu);
-				ka_klijentu.println("Ime se pise velikim slovom!");
-				ka_klijentu.println("Unesite ime:");
+			ServerThread.ka_klijentu.println("Unesite ime:");
+			while (!validno_ime_prezime(novi_korisnik.ime = ServerThread.od_klijenta.readLine())) {
+				header();
+				ServerThread.ka_klijentu.println("Ime se pise velikim slovom!");
+				ServerThread.ka_klijentu.println("Unesite ime:");
 			}
-			ka_klijentu.println("Unesite prezime:");
-			while (!validno_ime_prezime(novi_korisnik.prezime = od_klijenta.readLine())) {
-				header(ka_klijentu);
-				ka_klijentu.println("Prezime se pise velikim slovom!");
-				ka_klijentu.println("Unesite prezime:");
+			ServerThread.ka_klijentu.println("Unesite prezime:");
+			while (!validno_ime_prezime(novi_korisnik.prezime = ServerThread.od_klijenta.readLine())) {
+				header();
+				ServerThread.ka_klijentu.println("Prezime se pise velikim slovom!");
+				ServerThread.ka_klijentu.println("Unesite prezime:");
 			}
-			ka_klijentu.println("Unesite JMBG:");
-			while (!validan_JMBG(novi_korisnik.JMBG = od_klijenta.readLine())) {
-				header(ka_klijentu);
-				ka_klijentu.println("Unesite validan JMBG:");
+			ServerThread.ka_klijentu.println("Unesite JMBG:");
+			while (!validan_JMBG(novi_korisnik.JMBG = ServerThread.od_klijenta.readLine())) {
+				header();
+				ServerThread.ka_klijentu.println("Unesite validan JMBG:");
 			}
-			ka_klijentu.println("Unesite broj kreditne kartice:");
-			while (!Op_Uplata.validna_kartica(novi_korisnik.kartica = od_klijenta.readLine())) {
-				header(ka_klijentu);
-				ka_klijentu.println("Ta kartica ne postoji!");
-				ka_klijentu.println("Unesite broj kreditne kartice:");
+			ServerThread.ka_klijentu.println("Unesite broj kreditne kartice:");
+			while (!Op_Uplata.validna_kartica(novi_korisnik.kartica = ServerThread.od_klijenta.readLine())) {
+				header();
+				ServerThread.ka_klijentu.println("Ta kartica ne postoji!");
+				ServerThread.ka_klijentu.println("Unesite broj kreditne kartice:");
 			}
-			ka_klijentu.println("Unesite email:");
-			while (!validan_email(novi_korisnik.email = od_klijenta.readLine())) {
-				header(ka_klijentu);
-				ka_klijentu.println(novi_korisnik.email + " nije validan email!");
-				ka_klijentu.println("Unesite email:");
+			ServerThread.ka_klijentu.println("Unesite email:");
+			while (!validan_email(novi_korisnik.email = ServerThread.od_klijenta.readLine())) {
+				header();
+				ServerThread.ka_klijentu.println(novi_korisnik.email + " nije validan email!");
+				ServerThread.ka_klijentu.println("Unesite email:");
 			}
 
 			if (unos_registracije(novi_korisnik)) {
-				header(ka_klijentu);
-				ka_klijentu.println("Uspesno ste se registrovali!");
-				ka_klijentu.println("\tKorisnicko ime: " + novi_korisnik.username);
-				ka_klijentu.println("Sada mozete videti najskorije uplate.");
+				header();
+				ServerThread.ka_klijentu.println("Uspesno ste se registrovali!");
+				ServerThread.ka_klijentu.println("\tKorisnicko ime: " + novi_korisnik.username);
 			} else {
-				ka_klijentu.println("Greska pri registraciji!");
+				ServerThread.ka_klijentu.println("Greska pri registraciji!");
 			}
 		} catch (IOException e) {
 			System.err.println("IOException: " + e);
@@ -147,11 +144,11 @@ public class Op_Registracija {
 		return true;
 	}
 
-	static void header(PrintStream ka_klijentu) {
-		ka_klijentu.println("==================================================");
-		ka_klijentu.println("=               SISTEM ZA DONACIJU               =");
-		ka_klijentu.println("=                  Registracija                  =");
-		ka_klijentu.println("==================================================");
+	static void header() {
+		ServerThread.ka_klijentu.println("==================================================");
+		ServerThread.ka_klijentu.println("=               SISTEM ZA DONACIJU               =");
+		ServerThread.ka_klijentu.println("=                  Registracija                  =");
+		ServerThread.ka_klijentu.println("==================================================");
 	}
 
 }

@@ -1,9 +1,7 @@
 package humanitarni_server;
 
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.util.GregorianCalendar;
 import java.util.concurrent.locks.Lock;
@@ -14,45 +12,45 @@ import objekti.Uplata;
 
 public class Op_Uplata {
 
-	public static void uplata_meni(BufferedReader od_klijenta, PrintStream ka_klijentu) {
+	public static void uplata() {
 		Uplata nova_uplata = new Uplata();
 		String kartica;
 		try {
 			// unos osnovnih podataka
-			header(ka_klijentu);
-			ka_klijentu.println("Ime: ");
-			nova_uplata.ime = od_klijenta.readLine();
-			ka_klijentu.println("Prezime: ");
-			nova_uplata.prezime = od_klijenta.readLine();
-			ka_klijentu.println("Adresa: ");
-			nova_uplata.adresa = od_klijenta.readLine();
+			header();
+			ServerThread.ka_klijentu.println("Ime: ");
+			nova_uplata.ime = ServerThread.od_klijenta.readLine();
+			ServerThread.ka_klijentu.println("Prezime: ");
+			nova_uplata.prezime = ServerThread.od_klijenta.readLine();
+			ServerThread.ka_klijentu.println("Adresa: ");
+			nova_uplata.adresa = ServerThread.od_klijenta.readLine();
 			// unos i validacija kartice
-			kartica = unos_kartice(od_klijenta, ka_klijentu);
+			kartica = unos_kartice();
 			while (!validna_kartica(kartica)) {
-				header(ka_klijentu);
-				ka_klijentu.println("Podaci nisu validni!");
-				kartica = unos_kartice(od_klijenta, ka_klijentu);
+				header();
+				ServerThread.ka_klijentu.println("Podaci nisu validni!");
+				kartica = unos_kartice();
 			}
 			// unos i validacija iznosa
-			ka_klijentu.println("Iznos koji zelite uplatiti: ");
+			ServerThread.ka_klijentu.println("Iznos koji zelite uplatiti: ");
 			try {
-				nova_uplata.iznos = Integer.parseInt(od_klijenta.readLine());
+				nova_uplata.iznos = Integer.parseInt(ServerThread.od_klijenta.readLine());
 			} catch (NumberFormatException e) {
 				nova_uplata.iznos = 0;
 			}
 			while (nova_uplata.iznos < 200) {
-				header(ka_klijentu);
-				ka_klijentu.println("Iznos mora biti najmanje broj 200!");
-				ka_klijentu.println("Iznos koji zelite uplatiti: ");
+				header();
+				ServerThread.ka_klijentu.println("Iznos mora biti najmanje broj 200!");
+				ServerThread.ka_klijentu.println("Iznos koji zelite uplatiti: ");
 				try {
-					nova_uplata.iznos = Integer.parseInt(od_klijenta.readLine());
+					nova_uplata.iznos = Integer.parseInt(ServerThread.od_klijenta.readLine());
 				} catch (NumberFormatException e) {
 					nova_uplata.iznos = 0;
 				}
 			}
 			// jasno iz naziva
 			if (dodaj_uplatu(nova_uplata) && apdejtuj_stanje(nova_uplata)) {
-				ka_klijentu.println("Vasa uplata je uspesno evidentirana!");
+				ServerThread.ka_klijentu.println("Vasa uplata je uspesno evidentirana!");
 			}
 		} catch (IOException e) {
 			System.err.println("> Greska u vezi sa klijentom;");
@@ -137,20 +135,20 @@ public class Op_Uplata {
 		return status;
 	}
 
-	static String unos_kartice(BufferedReader od_klijenta, PrintStream ka_klijentu) throws IOException {
+	static String unos_kartice() throws IOException {
 		String kartica;
-		ka_klijentu.println("Broj kreditne kartice: ");
-		kartica = od_klijenta.readLine() + " ";
-		ka_klijentu.println("CVV: ");
-		kartica += od_klijenta.readLine();
+		ServerThread.ka_klijentu.println("Broj kreditne kartice: ");
+		kartica = ServerThread.od_klijenta.readLine() + " ";
+		ServerThread.ka_klijentu.println("CVV: ");
+		kartica += ServerThread.od_klijenta.readLine();
 		return kartica;
 	}
 
-	static void header(PrintStream ka_klijentu) {
-		ka_klijentu.println("==================================================");
-		ka_klijentu.println("=               SISTEM ZA DONACIJU               =");
-		ka_klijentu.println("=                     Uplata                     =");
-		ka_klijentu.println("==================================================");
+	static void header() {
+		ServerThread.ka_klijentu.println("==================================================");
+		ServerThread.ka_klijentu.println("=               SISTEM ZA DONACIJU               =");
+		ServerThread.ka_klijentu.println("=                     Uplata                     =");
+		ServerThread.ka_klijentu.println("==================================================");
 	}
 
 	static boolean validna_kartica(String kartica) {

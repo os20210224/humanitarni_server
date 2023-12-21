@@ -5,23 +5,17 @@ import java.io.PrintStream;
 
 public class Meni {
 
-	static void ocisti_ekran(PrintStream tok) {
+	static void ocisti_ekran(PrintStream tok) { // TODO implementirati ovo zapravo
 		tok.print("\033[H\033[2J\n");
 		tok.flush();
 	}
 
 	// metoda koja pruza glavni meni sa opcijama
-	public static void glavni_meni(boolean izlaz)
+	public static void glavni_meni()
 			throws IOException {
-		while (!izlaz) {
-			//	neko resenje za ciscenje ekrana konzole
-			ServerThread.ka_klijentu.println("==================================================");
-			ServerThread.ka_klijentu.println("=               SISTEM ZA DONACIJU               =");
-			if (ServerThread.prijavljen_korisnik != null) {
-				ServerThread.ka_klijentu.println("=------------------------------------------------=");			
-				ServerThread.ka_klijentu.println(String.format("%s Korisnik:%37s %s", "=",ServerThread.prijavljen_korisnik.username , "="));		
-			}
-			ServerThread.ka_klijentu.println("==================================================");
+		while (!ServerThread.kraj) {
+			//	TODO neko resenje za ciscenje ekrana konzole
+			Meni_Header.header(Podmeni.GLAVNI_MENI);
 			ServerThread.ka_klijentu.println("\t1. Uplata");
 			ServerThread.ka_klijentu.println("\t2. Registracija");
 			ServerThread.ka_klijentu.println("\t3. Prijava");
@@ -38,7 +32,7 @@ public class Meni {
 			}
 			switch (izbor) {
 			case 0:
-				izlaz = true;
+				ServerThread.kraj = true;
 				ServerThread.ka_klijentu.println("> Prijatno;");
 				break;
 			case 1:

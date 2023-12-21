@@ -11,8 +11,10 @@ public class ServerThread extends Thread {
 
 	public static BufferedReader od_klijenta = null;
 	public static PrintStream ka_klijentu = null;
-	
+
 	public static Korisnik prijavljen_korisnik;
+
+	public static boolean kraj = false;
 
 	public ServerThread(Socket klijent_soket) {
 		this.klijent_soket = klijent_soket;
@@ -27,7 +29,13 @@ public class ServerThread extends Thread {
 
 			ka_klijentu.println("> Konekcija uspesna!");
 			ka_klijentu.println("> Dobrodosli!\n");
-			Meni.glavni_meni(false);
+			Meni.glavni_meni();
+
+			while (true) {
+				if (kraj)
+					Server.aktivni_klijenti.remove(this);
+			}
+
 		} catch (IOException e) {
 			System.err.println(">>> greska u konekciji sa klijentom: " + e);
 		}

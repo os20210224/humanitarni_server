@@ -21,11 +21,14 @@ public class Meni_Header {
 		case PREGLED_TRANSAKCIJA:
 			ServerThread.ka_klijentu.println("=               Pregled transakcija              =");
 			break;
+		case GLAVNI_MENI:
+			// nista c:
+			break;
 		default:
 			break;
 		}
 		if (ServerThread.prijavljen_korisnik != null) {
-			ServerThread.ka_klijentu.println("=------------------------------------------------=");			
+			ServerThread.ka_klijentu.println("= ---------------------------------------------- =");			
 			ServerThread.ka_klijentu.println(String.format("%s Korisnik:%37s %s", "=",ServerThread.prijavljen_korisnik.username , "="));		
 		}
 

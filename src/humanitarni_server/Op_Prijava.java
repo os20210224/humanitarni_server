@@ -52,7 +52,7 @@ public class Op_Prijava {
 	}
 
 	static log validni_kredencijali(Username_Password up) throws RegKlijentiException {
-		File registrovani_korisnici = new File("registrovani_klijenti.txt");
+		File registrovani_korisnici = new File("registrovani_klijenti.txt"); // TODO prebaci na dat
 		Korisnik k;
 		boolean korisnik_postoji = false;
 		try {
@@ -90,10 +90,5 @@ class Username_Password {
 
 	public Username_Password() {
 
-	}
-
-	public Username_Password(String username, String password) {
-		this.username = username;
-		this.password = password;
 	}
 }

@@ -79,7 +79,7 @@ public class Op_Registracija {
 	static boolean unos_registracije(Korisnik korisnik) {
 		ReadWriteLock lock = new ReentrantReadWriteLock();
 		Lock upis_lock = lock.writeLock();
-		File registrovani_korisnici = new File("registrovani_klijenti.txt");
+		File registrovani_korisnici = new File("registrovani_klijenti.txt"); // TODO promeni na dat
 		try {
 			// true u file output konstrukturu otvara fajl za apendovanje // boolean append
 			upis_lock.lock();

@@ -51,6 +51,9 @@ public class Op_Uplata {
 			// jasno iz naziva
 			if (dodaj_uplatu(nova_uplata) && apdejtuj_stanje(nova_uplata)) {
 				ServerThread.ka_klijentu.println("Vasa uplata je uspesno evidentirana!");
+				ServerThread.ka_klijentu.println("> Fajl");
+				ServerThread.ka_klijentu.print(formatiraj_uplatu(nova_uplata));
+				ServerThread.ka_klijentu.println("Dobili ste fajl uplata.txt!");
 			}
 		} catch (IOException e) {
 			System.err.println("> Greska u vezi sa klijentom;");
@@ -100,15 +103,6 @@ public class Op_Uplata {
 	static String unos_CVV() throws IOException {
 		ServerThread.ka_klijentu.println("Unesite CVV:");
 		return ServerThread.prijavljen_korisnik.kartica + " " + ServerThread.od_klijenta.readLine();
-	}
-
-	static boolean posalji_fajl(Uplata uplata) {
-		boolean stanje = true;
-
-		String us = formatiraj_uplatu(uplata);
-		// TODO posalji fajl preko TCPa :D
-
-		return stanje;
 	}
 
 	static boolean dodaj_uplatu(Uplata uplata) {

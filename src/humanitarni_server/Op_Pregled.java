@@ -29,6 +29,7 @@ public class Op_Pregled {
 			ServerThread.ka_klijentu.println("Doslo je do greske pri ucitavanju transakcija.");
 		}
 	}
+	
 	// METODE
 
 	static boolean transakcije() {
@@ -42,15 +43,13 @@ public class Op_Pregled {
 			uplate = new RandomAccessFile("uplate.txt", "rw");
 			
 			String u;
-//			String header = uplate.readLine(); // TODO srediti format transakcija
+
 			while ((u = uplate.readLine()) != null) {
 				lista.add(0, u);
 			}
 			uplate.close();
 
 			ServerThread.ka_klijentu.println("Evo najskorijih transakcija:");
-			
-//			ServerThread.ka_klijentu.println(header);
 
 			int end = Math.min(10, lista.size() - 1);
 			for (int i = 0; i < end; i++) {

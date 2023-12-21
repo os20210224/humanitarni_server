@@ -133,13 +133,13 @@ public class Op_Uplata {
 		return status;
 	}
 
-	static String formatiraj_uplatu(Uplata uplata) { // TODO srediti ovaj format upisa i dodati header
-		String uplata_string = String.format("| Ime: %20s ", uplata.ime)
-				+ String.format("| Prezime: %20s |", uplata.prezime) + String.format("Adresa: %30s |", uplata.email)
-				+ String.format("Datum i vreme: %d.%d.%d %d:%2d |", uplata.vreme.get(GregorianCalendar.DAY_OF_MONTH),
+	static String formatiraj_uplatu(Uplata uplata) {
+		String uplata_string = String.format("| %20s ", uplata.ime) + String.format("| %20s ", uplata.prezime)
+				+ String.format("| %30s ", uplata.email)
+				+ String.format("| %d.%d.%d %d:%2d ", uplata.vreme.get(GregorianCalendar.DAY_OF_MONTH),
 						uplata.vreme.get(GregorianCalendar.MONTH), uplata.vreme.get(GregorianCalendar.YEAR),
 						uplata.vreme.get(GregorianCalendar.HOUR_OF_DAY), uplata.vreme.get(GregorianCalendar.MINUTE))
-				+ String.format("Iznos: %d |\n", uplata.iznos);
+				+ String.format("| %d |\n", uplata.iznos);
 		return uplata_string;
 	}
 

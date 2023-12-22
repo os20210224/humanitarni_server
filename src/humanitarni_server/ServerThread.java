@@ -3,38 +3,26 @@ package humanitarni_server;
 import java.io.*;
 import java.net.*;
 
-import objekti.Korisnik;
+import objekti.Klijent_Info;
 
 public class ServerThread extends Thread {
 
-	Socket klijent_soket = null;
-
-	public static BufferedReader od_klijenta = null;
-	public static PrintStream ka_klijentu = null;
-
-	public static Korisnik prijavljen_korisnik;
-
-	public static boolean kraj = false;
+	Klijent_Info k = new Klijent_Info();
 
 	public ServerThread(Socket klijent_soket) {
-		this.klijent_soket = klijent_soket;
+		this.k.klijent_soket = klijent_soket;
 	}
 
 	@Override
 	public void run() {
 		try {
 			// inicijalizacija tokova
-			od_klijenta = new BufferedReader(new InputStreamReader(klijent_soket.getInputStream()));
-			ka_klijentu = new PrintStream(klijent_soket.getOutputStream());
+			k.od_klijenta = new BufferedReader(new InputStreamReader(k.klijent_soket.getInputStream()));
+			k.ka_klijentu = new PrintStream(k.klijent_soket.getOutputStream());
 
-			ka_klijentu.println("> Konekcija uspesna!");
-			ka_klijentu.println("> Dobrodosli!\n");
-			Meni.glavni_meni();
-
-			while (true) {
-				if (kraj)
-					Server.aktivni_klijenti.remove(this);
-			}
+			k.ka_klijentu.println("> Konekcija uspesna!");
+			k.ka_klijentu.println("> Dobrodosli!\n");
+			Meni.glavni_meni(k);
 
 		} catch (IOException e) {
 			System.err.println(">>> greska u konekciji sa klijentom: " + e);

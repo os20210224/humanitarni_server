@@ -7,30 +7,29 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import exceptions.RegKlijentiException;
+import objekti.Klijent_Info;
 import objekti.Korisnik;
 
 public class Op_Prijava {
 
-	public static void prijava() {
+	public static void prijava(Klijent_Info k) throws IOException {
 
 		try {
-			Username_Password up = unos(null);
+			Username_Password up = unos(k, null);
 			log ishod;
-			while ((ishod = validni_kredencijali(up)) != log.USPEH) {
+			while ((ishod = validni_kredencijali(k, up)) != log.USPEH) {
 				switch (ishod) {
 				case POGRESNA_LOZINKA:
-					up = unos("Pogresna lozinka!\n");
+					up = unos(k, "Pogresna lozinka!\n");
 					break;
 				case NE_POSTOJI:
-					up = unos("Nije registrovan korisnik sa tim korisnickim imenom!\n");
+					up = unos(k, "Nije registrovan korisnik sa tim korisnickim imenom!\n");
 					break;
 				default:
 					break;
 				}
 			}
-			ServerThread.ka_klijentu.println("\nUspesno ste se prijavili!");
-		} catch (IOException e) {
-			System.err.println("IOException: " + e);
+			k.ka_klijentu.println("\nUspesno ste se prijavili!");
 		} catch (RegKlijentiException e) {
 			System.err.println("registrovani_klijent Exception: " + e);
 			e.printStackTrace();
@@ -39,30 +38,30 @@ public class Op_Prijava {
 
 	// METODE
 
-	static Username_Password unos(String poruka) throws IOException {
+	static Username_Password unos(Klijent_Info k, String poruka) throws IOException {
 		Username_Password up = new Username_Password();
-		Meni_Header.header(Podmeni.PRIJAVA);
+		Meni_Header.header(k, Podmeni.PRIJAVA);
 		if (poruka != null)
-			ServerThread.ka_klijentu.println(poruka);
-		ServerThread.ka_klijentu.println("Unesite korisnicko ime:");
-		up.username = ServerThread.od_klijenta.readLine();
-		ServerThread.ka_klijentu.println("Unesite sifru:");
-		up.password = ServerThread.od_klijenta.readLine();
+			k.ka_klijentu.println(poruka);
+		k.ka_klijentu.println("Unesite korisnicko ime:");
+		up.username = k.od_klijenta.readLine();
+		k.ka_klijentu.println("Unesite sifru:");
+		up.password = k.od_klijenta.readLine();
 		return up;
 	}
 
-	static log validni_kredencijali(Username_Password up) throws RegKlijentiException {
+	static log validni_kredencijali(Klijent_Info k, Username_Password up) throws RegKlijentiException {
 		File registrovani_korisnici = new File("registrovani_klijenti.txt"); // TODO prebaci na dat
-		Korisnik k;
+		Korisnik kor;
 		boolean korisnik_postoji = false;
 		try {
 			ObjectInputStream pogled = new ObjectInputStream(new FileInputStream(registrovani_korisnici));
-			while ((k = (Korisnik) pogled.readObject()) != null) {
-				if (up.username.equals(k.username)) {
+			while ((kor = (Korisnik) pogled.readObject()) != null) {
+				if (up.username.equals(kor.username)) {
 					korisnik_postoji = true;
 				}
-				if (up.password.equals(k.password)) {
-					ServerThread.prijavljen_korisnik = k;
+				if (up.password.equals(kor.password)) {
+					k.prijavljen_korisnik = kor;
 					pogled.close();
 					return log.USPEH;
 				}
@@ -71,7 +70,7 @@ public class Op_Prijava {
 		} catch (EOFException e) {
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
-			throw new RegKlijentiException();
+			throw new RegKlijentiException(k);
 		}
 		if (korisnik_postoji)
 			return log.POGRESNA_LOZINKA;

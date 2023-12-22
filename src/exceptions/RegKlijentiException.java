@@ -1,12 +1,12 @@
 package exceptions;
 
-import humanitarni_server.ServerThread;
+import objekti.Klijent_Info;
 
 public class RegKlijentiException extends Exception {
 
-	public RegKlijentiException() {
-		ServerThread.ka_klijentu.println("Imamo tehnickih problema");
-		ServerThread.ka_klijentu.println("Pokusajte kasnije ili nam prijavite problem na email@host.domen");
+	public RegKlijentiException(Klijent_Info k) {
+		k.ka_klijentu.println("Imamo tehnickih problema");
+		k.ka_klijentu.println("Pokusajte kasnije ili nam prijavite problem na email@host.domen");
 	}
 	
 }

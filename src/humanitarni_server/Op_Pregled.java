@@ -4,44 +4,40 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import objekti.Klijent_Info;
 
 public class Op_Pregled {
 
-	public static void pregled_stanja() {
-		Meni_Header.header(Podmeni.PREGLED_STANJA);
+	public static void pregled_stanja(Klijent_Info k) {
+		Meni_Header.header(k, Podmeni.PREGLED_STANJA);
 		int stanje = get_stanje();
 		if (stanje == -1)
-			ServerThread.ka_klijentu.println("Pregled stanja trenutno nije dostupan.\n");
+			k.ka_klijentu.println("Pregled stanja trenutno nije dostupan.\n");
 		else
-			ServerThread.ka_klijentu.println("Do sada je skupljeno " + stanje + " dinara!\n");
+			k.ka_klijentu.println("Do sada je skupljeno " + stanje + " dinara!\n");
 	}
 
-	public static void pregled_transakcija() {
-		Meni_Header.header(Podmeni.PREGLED_TRANSAKCIJA);
-		if (ServerThread.prijavljen_korisnik == null) {
-			ServerThread.ka_klijentu.println("Morate biti ulogovani da bi videli transakcije!");
+	public static void pregled_transakcija(Klijent_Info k) {
+		Meni_Header.header(k, Podmeni.PREGLED_TRANSAKCIJA);
+		if (k.prijavljen_korisnik == null) {
+			k.ka_klijentu.println("Morate biti ulogovani da bi videli transakcije!");
 			return;
 		}
-		if (!transakcije()) {
-			ServerThread.ka_klijentu.println("Doslo je do greske pri ucitavanju transakcija.");
+		if (!transakcije(k)) {
+			k.ka_klijentu.println("Doslo je do greske pri ucitavanju transakcija.");
 		}
 	}
-	
+
 	// METODE
 
-	static boolean transakcije() {
+	static boolean transakcije(Klijent_Info k) {
 		ArrayList<String> lista = new ArrayList<String>();
 		boolean status = true;
-		ReadWriteLock lock = new ReentrantReadWriteLock();
-		Lock upis_lock = lock.writeLock();
 		try {
-			upis_lock.lock();
 			RandomAccessFile uplate;
-			uplate = new RandomAccessFile("uplate.txt", "rw");
-			
+			uplate = new RandomAccessFile("uplate.txt", "r");
+
 			String u;
 
 			while ((u = uplate.readLine()) != null) {
@@ -49,11 +45,11 @@ public class Op_Pregled {
 			}
 			uplate.close();
 
-			ServerThread.ka_klijentu.println("Evo najskorijih transakcija:");
+			k.ka_klijentu.println("Evo najskorijih transakcija:");
 
-			int end = Math.min(10, lista.size() - 1);
+			int end = Math.min(10, lista.size());
 			for (int i = 0; i < end; i++) {
-				ServerThread.ka_klijentu.println("\t" + lista.get(i));
+				k.ka_klijentu.println("\t" + lista.get(i));
 			}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -63,8 +59,6 @@ public class Op_Pregled {
 			// TODO Auto-generated catch block
 			status = false;
 			e.printStackTrace();
-		} finally {
-			upis_lock.unlock();
 		}
 		return status;
 	}

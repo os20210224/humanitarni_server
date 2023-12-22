@@ -1,25 +1,28 @@
 package humanitarni_server;
 
+import objekti.Klijent_Info;
+
 public class Meni_Header {
 
-	public static void header(Podmeni podmeni) {
-		ServerThread.ka_klijentu.println("==================================================");
-		ServerThread.ka_klijentu.println("=               SISTEM ZA DONACIJU               =");
+	public static void header(Klijent_Info k, Podmeni podmeni) {
+		ocisti_ekran(k);
+		k.ka_klijentu.println("==================================================");
+		k.ka_klijentu.println("=               SISTEM ZA DONACIJU               =");
 		switch (podmeni) {
 		case UPLATA:
-			ServerThread.ka_klijentu.println("=                     Uplata                     =");
+			k.ka_klijentu.println("=                     Uplata                     =");
 			break;
 		case REGISTRACIJA:
-			ServerThread.ka_klijentu.println("=                  Registracija                  =");
+			k.ka_klijentu.println("=                  Registracija                  =");
 			break;
 		case PRIJAVA:
-			ServerThread.ka_klijentu.println("=                     Prijava                    =");
+			k.ka_klijentu.println("=                     Prijava                    =");
 			break;
 		case PREGLED_STANJA:
-			ServerThread.ka_klijentu.println("=                 Pregled stanja                 =");
+			k.ka_klijentu.println("=                 Pregled stanja                 =");
 			break;
 		case PREGLED_TRANSAKCIJA:
-			ServerThread.ka_klijentu.println("=               Pregled transakcija              =");
+			k.ka_klijentu.println("=               Pregled transakcija              =");
 			break;
 		case GLAVNI_MENI:
 			// nista c:
@@ -27,12 +30,18 @@ public class Meni_Header {
 		default:
 			break;
 		}
-		if (ServerThread.prijavljen_korisnik != null) {
-			ServerThread.ka_klijentu.println("= ---------------------------------------------- =");			
-			ServerThread.ka_klijentu.println(String.format("%s Korisnik:%37s %s", "=",ServerThread.prijavljen_korisnik.username , "="));		
+		if (k.prijavljen_korisnik != null) {
+			k.ka_klijentu.println("= ---------------------------------------------- =");
+			k.ka_klijentu
+					.println(String.format("%s Korisnik:%37s %s", "=", k.prijavljen_korisnik.username, "="));
 		}
 
-		ServerThread.ka_klijentu.println("==================================================");
+		k.ka_klijentu.println("==================================================");
+	}
+
+	static void ocisti_ekran(Klijent_Info k) {
+		k.ka_klijentu.print("\033[H\033[2J\n");
+		k.ka_klijentu.flush();
 	}
 
 }

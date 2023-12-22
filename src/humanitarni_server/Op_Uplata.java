@@ -8,89 +8,85 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import objekti.Klijent_Info;
 import objekti.Uplata;
 
 public class Op_Uplata {
 
-	public static void uplata() {
+	public static void uplata(Klijent_Info k) throws IOException {
 		Uplata nova_uplata = new Uplata();
 		String kartica;
+		// unos osnovnih podataka
+		Meni_Header.header(k, Podmeni.UPLATA);
+		k.ka_klijentu.println("Ime: ");
+		nova_uplata.ime = k.od_klijenta.readLine();
+		k.ka_klijentu.println("Prezime: ");
+		nova_uplata.prezime = k.od_klijenta.readLine();
+		k.ka_klijentu.println("Adresa: ");
+		nova_uplata.email = k.od_klijenta.readLine();
+		// unos i validacija kartice
+		kartica = unos_kartice(k);
+		while (!validna_kartica(kartica)) {
+			Meni_Header.header(k, Podmeni.UPLATA);
+			k.ka_klijentu.println("Podaci nisu validni!");
+			kartica = unos_kartice(k);
+		}
+		// unos i validacija iznosa
+		k.ka_klijentu.println("Iznos koji zelite uplatiti: ");
 		try {
-			// unos osnovnih podataka
-			Meni_Header.header(Podmeni.UPLATA);
-			ServerThread.ka_klijentu.println("Ime: ");
-			nova_uplata.ime = ServerThread.od_klijenta.readLine();
-			ServerThread.ka_klijentu.println("Prezime: ");
-			nova_uplata.prezime = ServerThread.od_klijenta.readLine();
-			ServerThread.ka_klijentu.println("Adresa: ");
-			nova_uplata.email = ServerThread.od_klijenta.readLine();
-			// unos i validacija kartice
-			kartica = unos_kartice();
-			while (!validna_kartica(kartica)) {
-				Meni_Header.header(Podmeni.UPLATA);
-				ServerThread.ka_klijentu.println("Podaci nisu validni!");
-				kartica = unos_kartice();
-			}
-			// unos i validacija iznosa
-			ServerThread.ka_klijentu.println("Iznos koji zelite uplatiti: ");
+			nova_uplata.iznos = Integer.parseInt(k.od_klijenta.readLine());
+		} catch (NumberFormatException e) {
+			nova_uplata.iznos = 0;
+		}
+		while (nova_uplata.iznos < 200) {
+			Meni_Header.header(k, Podmeni.UPLATA);
+			k.ka_klijentu.println("Iznos mora biti najmanje broj 200!");
+			k.ka_klijentu.println("Iznos koji zelite uplatiti: ");
 			try {
-				nova_uplata.iznos = Integer.parseInt(ServerThread.od_klijenta.readLine());
+				nova_uplata.iznos = Integer.parseInt(k.od_klijenta.readLine());
 			} catch (NumberFormatException e) {
 				nova_uplata.iznos = 0;
 			}
-			while (nova_uplata.iznos < 200) {
-				Meni_Header.header(Podmeni.UPLATA);
-				ServerThread.ka_klijentu.println("Iznos mora biti najmanje broj 200!");
-				ServerThread.ka_klijentu.println("Iznos koji zelite uplatiti: ");
-				try {
-					nova_uplata.iznos = Integer.parseInt(ServerThread.od_klijenta.readLine());
-				} catch (NumberFormatException e) {
-					nova_uplata.iznos = 0;
-				}
-			}
-			// jasno iz naziva
-			if (dodaj_uplatu(nova_uplata) && apdejtuj_stanje(nova_uplata)) {
-				ServerThread.ka_klijentu.println("Vasa uplata je uspesno evidentirana!");
-				ServerThread.ka_klijentu.println("> Fajl");
-				ServerThread.ka_klijentu.print(formatiraj_uplatu(nova_uplata));
-				ServerThread.ka_klijentu.println("Dobili ste fajl uplata.txt!");
-			}
-		} catch (IOException e) {
-			System.err.println("> Greska u vezi sa klijentom;");
-			e.printStackTrace();
+		}
+		// jasno iz naziva
+		if (dodaj_uplatu(nova_uplata) && apdejtuj_stanje(nova_uplata)) {
+			k.ka_klijentu.println("Vasa uplata je uspesno evidentirana!");
+			k.ka_klijentu.println("> Fajl");
+			k.ka_klijentu.print(formatiraj_uplatu(nova_uplata));
+			k.ka_klijentu.println("Dobili ste fajl uplata.txt!");
 		}
 	}
 
-	public static void p_uplata() {
-		Uplata nova_uplata = new Uplata(ServerThread.prijavljen_korisnik.ime, ServerThread.prijavljen_korisnik.prezime,
-				ServerThread.prijavljen_korisnik.email);
+	public static void p_uplata(Klijent_Info k) {
+		Uplata nova_uplata = new Uplata(k.prijavljen_korisnik.ime, k.prijavljen_korisnik.prezime,
+				k.prijavljen_korisnik.email);
 		String kartica;
 		try {
-			kartica = unos_CVV();
+			kartica = unos_CVV(k);
 			while (!validna_kartica(kartica)) {
-				Meni_Header.header(Podmeni.UPLATA);
-				ServerThread.ka_klijentu.println("Pogresan CVV!");
-				kartica = unos_CVV();
+				Meni_Header.header(k, Podmeni.UPLATA);
+				k.ka_klijentu.println("Pogresan CVV!");
+				kartica = unos_CVV(k);
 			}
 			// unos i validacija iznosa
-			ServerThread.ka_klijentu.println("Iznos koji zelite uplatiti: ");
+			k.ka_klijentu.println("Iznos koji zelite uplatiti: ");
 			try {
-				nova_uplata.iznos = Integer.parseInt(ServerThread.od_klijenta.readLine());
+				nova_uplata.iznos = Integer.parseInt(k.od_klijenta.readLine());
 			} catch (NumberFormatException e) {
 				nova_uplata.iznos = 0;
 			}
 			while (nova_uplata.iznos < 200) {
-				Meni_Header.header(Podmeni.UPLATA);
-				ServerThread.ka_klijentu.println("Iznos mora biti najmanje broj 200!");
-				ServerThread.ka_klijentu.println("Iznos koji zelite uplatiti: ");
+				Meni_Header.header(k, Podmeni.UPLATA);
+				k.ka_klijentu.println("Iznos mora biti najmanje broj 200!");
+				k.ka_klijentu.println("Iznos koji zelite uplatiti: ");
 				try {
-					nova_uplata.iznos = Integer.parseInt(ServerThread.od_klijenta.readLine());
+					nova_uplata.iznos = Integer.parseInt(k.od_klijenta.readLine());
 				} catch (NumberFormatException e) {
 					nova_uplata.iznos = 0;
 				}
 			}
 			if (dodaj_uplatu(nova_uplata) && apdejtuj_stanje(nova_uplata)) {
-				ServerThread.ka_klijentu.println("Vasa uplata je uspesno evidentirana!");
+				k.ka_klijentu.println("Vasa uplata je uspesno evidentirana!");
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -100,9 +96,9 @@ public class Op_Uplata {
 
 	// METODE
 
-	static String unos_CVV() throws IOException {
-		ServerThread.ka_klijentu.println("Unesite CVV:");
-		return ServerThread.prijavljen_korisnik.kartica + " " + ServerThread.od_klijenta.readLine();
+	static String unos_CVV(Klijent_Info k) throws IOException {
+		k.ka_klijentu.println("Unesite CVV:");
+		return k.prijavljen_korisnik.kartica + " " + k.od_klijenta.readLine();
 	}
 
 	static boolean dodaj_uplatu(Uplata uplata) {
@@ -121,11 +117,11 @@ public class Op_Uplata {
 			uplate.close();
 		} catch (FileNotFoundException e) {
 			status = false;
-			System.out.println("> Greska pri otvaranju liste uplata");
+			System.out.println("> Greska pri otvaranju liste uplata"); // TODO
 			e.printStackTrace();
 		} catch (IOException e) {
 			status = false;
-			System.out.println("> Greska pri zatvaranju liste uplata");
+			System.out.println("> Greska pri zatvaranju liste uplata");// TODO
 			e.printStackTrace();
 		} finally {
 			upis_lock.unlock();
@@ -159,11 +155,11 @@ public class Op_Uplata {
 			stanje.close();
 		} catch (FileNotFoundException e) {
 			status = false;
-			System.out.println("> Greska pri otvaranju stanja");
+			System.out.println("> Greska pri otvaranju stanja"); // TODO
 			e.printStackTrace();
 		} catch (IOException e) {
 			status = false;
-			System.out.println("> Greska pri zatvaranju stanja");
+			System.out.println("> Greska pri zatvaranju stanja");// TODO
 			e.printStackTrace();
 		} finally {
 			upis_lock.unlock();
@@ -171,12 +167,12 @@ public class Op_Uplata {
 		return status;
 	}
 
-	static String unos_kartice() throws IOException {
+	static String unos_kartice(Klijent_Info k) throws IOException {
 		String kartica;
-		ServerThread.ka_klijentu.println("Broj kreditne kartice: ");
-		kartica = ServerThread.od_klijenta.readLine() + " ";
-		ServerThread.ka_klijentu.println("CVV: ");
-		kartica += ServerThread.od_klijenta.readLine();
+		k.ka_klijentu.println("Broj kreditne kartice: ");
+		kartica = k.od_klijenta.readLine() + " ";
+		k.ka_klijentu.println("CVV: ");
+		kartica += k.od_klijenta.readLine();
 		return kartica;
 	}
 
@@ -192,10 +188,10 @@ public class Op_Uplata {
 			}
 			lista_kartica.close();
 		} catch (FileNotFoundException e) {
-			System.err.println("> Greska pri otvaranju baze");
+			System.err.println("> Greska pri otvaranju baze"); // TODO
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.err.println("> Greska pri zatvaranju baze");
+			System.err.println("> Greska pri zatvaranju baze"); // TODO
 			e.printStackTrace();
 		}
 		return false;

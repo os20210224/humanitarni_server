@@ -1,72 +1,69 @@
 package humanitarni_server;
 
 import java.io.IOException;
-import java.io.PrintStream;
+
+import objekti.Klijent_Info;
 
 public class Meni {
 
-	static void ocisti_ekran(PrintStream tok) { // TODO implementirati ovo zapravo
-		tok.print("\033[H\033[2J\n");
-		tok.flush();
-	}
-
 	// metoda koja pruza glavni meni sa opcijama
-	public static void glavni_meni()
-			throws IOException {
-		while (!ServerThread.kraj) {
-			//	TODO neko resenje za ciscenje ekrana konzole
-			Meni_Header.header(Podmeni.GLAVNI_MENI);
-			ServerThread.ka_klijentu.println("\t1. Uplata");
-			ServerThread.ka_klijentu.println("\t2. Registracija");
-			ServerThread.ka_klijentu.println("\t3. Prijava");
-			ServerThread.ka_klijentu.println("\t4. Pregled stanja");
-			ServerThread.ka_klijentu.println("\t5. Pregled transakcija");
-			ServerThread.ka_klijentu.println("\t0. Izlaz");
-			ServerThread.ka_klijentu.println("--------------------------------------------------");
-			ServerThread.ka_klijentu.println("\tIzbor: ");
+	public static void glavni_meni(Klijent_Info k) throws IOException { // ovde je bug sto thread ostane upaljen ako se
+																		// klijent ugasi pre interakcije sa menijem;
+																		// tenutno nemamideju kako to resiti
+		while (!k.kraj) {
+			Meni_Header.header(k, Podmeni.GLAVNI_MENI);
+			k.ka_klijentu.println("\t1. Uplata");
+			k.ka_klijentu.println("\t2. Registracija");
+			k.ka_klijentu.println("\t3. Prijava");
+			k.ka_klijentu.println("\t4. Pregled stanja");
+			k.ka_klijentu.println("\t5. Pregled transakcija");
+			k.ka_klijentu.println("\t0. Izlaz");
+			k.ka_klijentu.println("--------------------------------------------------");
+			k.ka_klijentu.println("\tIzbor: ");
 			int izbor = 7;
 			try {
-				izbor = Integer.parseInt(ServerThread.od_klijenta.readLine());
+				izbor = Integer.parseInt(k.od_klijenta.readLine());
 			} catch (NumberFormatException e) {
 				izbor = 7;
 			}
 			switch (izbor) {
 			case 0:
-				ServerThread.kraj = true;
-				ServerThread.ka_klijentu.println("> Prijatno;");
+				k.kraj = true;
+				k.prijavljen_korisnik = null;
+				k.ka_klijentu.println("> Prijatno;");
 				break;
 			case 1:
-				if(ServerThread.prijavljen_korisnik == null)
-					Op_Uplata.uplata();
+				if (k.prijavljen_korisnik == null)
+					Op_Uplata.uplata(k);
 				else
-					Op_Uplata.p_uplata();
-				ServerThread.ka_klijentu.println("> Pritisnite Enter za nastavak;");
-				ServerThread.od_klijenta.readLine();
+					Op_Uplata.p_uplata(k);
+				k.ka_klijentu.println("> Pritisnite Enter za nastavak;");
+				k.od_klijenta.readLine();
 				break;
 			case 2:
-				Op_Registracija.registracija();
-				ServerThread.ka_klijentu.println("> Pritisnite Enter za nastavak;");
-				ServerThread.od_klijenta.readLine();
+				Op_Registracija.registracija(k);
+				k.ka_klijentu.println("> Pritisnite Enter za nastavak;");
+				k.od_klijenta.readLine();
 				break;
 			case 3:
-				Op_Prijava.prijava();
-				ServerThread.ka_klijentu.println("> Pritisnite Enter za nastavak;");
-				ServerThread.od_klijenta.readLine();
+				Op_Prijava.prijava(k);
+				k.ka_klijentu.println("> Pritisnite Enter za nastavak;");
+				k.od_klijenta.readLine();
 				break;
 			case 4:
-				Op_Pregled.pregled_stanja();
-				ServerThread.ka_klijentu.println("> Pritisnite Enter za nastavak;");
-				ServerThread.od_klijenta.readLine();
+				Op_Pregled.pregled_stanja(k);
+				k.ka_klijentu.println("> Pritisnite Enter za nastavak;");
+				k.od_klijenta.readLine();
 				break;
 			case 5:
-				Op_Pregled.pregled_transakcija();
-				ServerThread.ka_klijentu.println("> Pritisnite Enter za nastavak;");
-				ServerThread.od_klijenta.readLine();
+				Op_Pregled.pregled_transakcija(k);
+				k.ka_klijentu.println("> Pritisnite Enter za nastavak;");
+				k.od_klijenta.readLine();
 				break;
 			default:
-				ServerThread.ka_klijentu.println("> Morate izabrati stavku izmedju 0 i 5;");
-				ServerThread.ka_klijentu.println("> Pritisnite Enter za nastavak;");
-				ServerThread.od_klijenta.readLine();
+				k.ka_klijentu.println("> Morate izabrati stavku izmedju 0 i 5;");
+				k.ka_klijentu.println("> Pritisnite Enter za nastavak;");
+				k.od_klijenta.readLine();
 				break;
 			}
 		}

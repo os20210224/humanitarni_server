@@ -6,34 +6,30 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import exceptions.RegKlijentiException;
+import exceptions.SrvGreskaException;
 import objekti.Klijent_Info;
 import objekti.Korisnik;
 
 public class Op_Prijava {
 
 	public static void prijava(Klijent_Info k) throws IOException {
-
-		try {
-			Username_Password up = unos(k, null);
-			log ishod;
-			while ((ishod = validni_kredencijali(k, up)) != log.USPEH) {
-				switch (ishod) {
-				case POGRESNA_LOZINKA:
-					up = unos(k, "Pogresna lozinka!\n");
-					break;
-				case NE_POSTOJI:
-					up = unos(k, "Nije registrovan korisnik sa tim korisnickim imenom!\n");
-					break;
-				default:
-					break;
-				}
+		Username_Password up = unos(k, null);
+		log ishod;
+		while ((ishod = validni_kredencijali(k, up)) != log.USPEH) {
+			switch (ishod) {
+			case POGRESNA_LOZINKA:
+				up = unos(k, "Pogresna lozinka!\n");
+				break;
+			case NE_POSTOJI:
+				up = unos(k, "Nije registrovan korisnik sa tim korisnickim imenom!\n");
+				break;
+			case SRV_GRESKA:
+				return;
+			default:
+				break;
 			}
-			k.ka_klijentu.println("\nUspesno ste se prijavili!");
-		} catch (RegKlijentiException e) {
-			System.err.println("registrovani_klijent Exception: " + e);
-			e.printStackTrace();
 		}
+		k.ka_klijentu.println("\nUspesno ste se prijavili!");
 	}
 
 	// METODE
@@ -50,8 +46,8 @@ public class Op_Prijava {
 		return up;
 	}
 
-	static log validni_kredencijali(Klijent_Info k, Username_Password up) throws RegKlijentiException {
-		File registrovani_korisnici = new File("registrovani_klijenti.txt"); // TODO prebaci na dat
+	static log validni_kredencijali(Klijent_Info k, Username_Password up) {
+		File registrovani_korisnici = new File("registrovani_klijenti.dat");
 		Korisnik kor;
 		boolean korisnik_postoji = false;
 		try {
@@ -70,7 +66,8 @@ public class Op_Prijava {
 		} catch (EOFException e) {
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
-			throw new RegKlijentiException(k);
+			SrvGreskaException.srv_greska_exception(k);
+			return log.SRV_GRESKA;
 		}
 		if (korisnik_postoji)
 			return log.POGRESNA_LOZINKA;
@@ -80,7 +77,7 @@ public class Op_Prijava {
 }
 
 enum log {
-	NE_POSTOJI, POGRESNA_LOZINKA, USPEH
+	NE_POSTOJI, POGRESNA_LOZINKA, USPEH, SRV_GRESKA
 }
 
 class Username_Password {

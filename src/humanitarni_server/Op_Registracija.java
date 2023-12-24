@@ -11,18 +11,25 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import exceptions.SrvGreskaException;
 import objekti.Klijent_Info;
 import objekti.Korisnik;
 
 // dopuni provere i feedback
 public class Op_Registracija {
 
+	static boolean serverska_greska = false;
+
 	public static void registracija(Klijent_Info k) throws IOException {
 		Korisnik novi_korisnik = new Korisnik();
 		Meni_Header.header(k, Podmeni.REGISTRACIJA);
 		k.ka_klijentu.println("Unesite korisnicko ime:");
-		while (!validan_username(novi_korisnik.username = k.od_klijenta.readLine())) {
+		while (!validan_username(k, novi_korisnik.username = k.od_klijenta.readLine())) {
 			Meni_Header.header(k, Podmeni.REGISTRACIJA);
+			if (serverska_greska) {
+				SrvGreskaException.srv_greska_exception(k);
+				return;
+			}
 			k.ka_klijentu.println("To ime je zauzeto!");
 			k.ka_klijentu.println("Unesite korisnicko ime:");
 		}
@@ -50,7 +57,7 @@ public class Op_Registracija {
 			k.ka_klijentu.println("Unesite validan JMBG:");
 		}
 		k.ka_klijentu.println("Unesite broj kreditne kartice:");
-		while (!Op_Uplata.validna_kartica(novi_korisnik.kartica = k.od_klijenta.readLine())) {
+		while (!Op_Uplata.validna_kartica(k, novi_korisnik.kartica = k.od_klijenta.readLine())) {
 			Meni_Header.header(k, Podmeni.REGISTRACIJA);
 			k.ka_klijentu.println("Ta kartica ne postoji!");
 			k.ka_klijentu.println("Unesite broj kreditne kartice:");
@@ -62,21 +69,22 @@ public class Op_Registracija {
 			k.ka_klijentu.println("Unesite email:");
 		}
 
-		if (unos_registracije(novi_korisnik)) {
+		if (unos_registracije(k, novi_korisnik)) {
 			Meni_Header.header(k, Podmeni.REGISTRACIJA);
 			k.ka_klijentu.println("Uspesno ste se registrovali!");
 			k.ka_klijentu.println("\tKorisnicko ime: " + novi_korisnik.username);
 		} else {
 			k.ka_klijentu.println("Greska pri registraciji!");
+			SrvGreskaException.srv_greska_exception(k);
 		}
 	}
 
 	// METODE
 
-	static boolean unos_registracije(Korisnik korisnik) {
+	static boolean unos_registracije(Klijent_Info k, Korisnik korisnik) {
 		ReadWriteLock lock = new ReentrantReadWriteLock();
 		Lock upis_lock = lock.writeLock();
-		File registrovani_korisnici = new File("registrovani_klijenti.txt"); // TODO promeni na dat
+		File registrovani_korisnici = new File("registrovani_klijenti.dat");
 		try {
 			// true u file output konstrukturu otvara fajl za apendovanje // boolean append
 			upis_lock.lock();
@@ -84,7 +92,8 @@ public class Op_Registracija {
 			upis.writeObject(korisnik);
 			upis.close();
 		} catch (IOException e) {
-			System.err.println("Greska pri otvaranju baze registrovanih korisnika");// TODO
+			System.err.println("Greska pri otvaranju baze registrovanih korisnika");
+			serverska_greska = true;
 			e.printStackTrace();
 			upis_lock.unlock();
 			return false;
@@ -96,13 +105,15 @@ public class Op_Registracija {
 
 	// provere
 
-	static boolean validan_username(String username) { // potencijlano ogranici na 35 TODO
-		Korisnik k;
-		File registrovani_korisnici = new File("registrovani_klijenti.txt");
+	static boolean validan_username(Klijent_Info k, String username) { // potencijlano ogranici na 35 TODO
+		if (username == null || username.equals(""))
+			return false;
+		Korisnik korisnik;
+		File registrovani_korisnici = new File("registrovani_klijenti.dat");
 		try {
 			ObjectInputStream pogled = new ObjectInputStream(new FileInputStream(registrovani_korisnici));
-			while ((k = (Korisnik) pogled.readObject()) != null) {
-				if (k.username.equals(username)) {
+			while ((korisnik = (Korisnik) pogled.readObject()) != null) {
+				if (korisnik.username.equals(username)) {
 					pogled.close();
 					return false;
 				}
@@ -112,9 +123,7 @@ public class Op_Registracija {
 			return true;
 		} catch (IOException | ClassNotFoundException e) {
 			System.err.println("Greska pri otvaranju baze registrovanih korisnika");
-			// ovde je potrebno sofisticiranije handlovanje greske, obavestiti korisnika da
-			// TODO
-			// je problem server side
+			serverska_greska = true;
 			e.printStackTrace();
 			return false;
 		}
@@ -145,6 +154,8 @@ public class Op_Registracija {
 	}
 
 	static boolean validno_ime_prezime(String ime_prezime) {
+		if (ime_prezime == null || ime_prezime.equals(""))
+			return false;
 		Character prvo_slovo = ime_prezime.charAt(0);
 		if (prvo_slovo != Character.toUpperCase(prvo_slovo))
 			return false;
